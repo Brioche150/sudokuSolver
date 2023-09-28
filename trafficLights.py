@@ -5,7 +5,7 @@ def printState():
 	print(type(redLight))
 	print("3"+str(5))
 
-redLight = 1
-yellowLight = 0
-greenLight = 0
+redLight = True
+yellowLight = False
+greenLight = False
 printState()
