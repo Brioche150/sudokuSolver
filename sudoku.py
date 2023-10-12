@@ -1,16 +1,45 @@
 import math
-def targetSearch(target, areaNum): # Area num has to be 0 indexed for the integer division to work
-    print("Searching for:", target, "in area number", areaNum)
+#I'm changing this to just return a list of which numbers isn't the area, because that just makes this faster
+def targetSearch(areaNum): # Area num has to be 0 indexed for the integer division to work
     # the row number of the area will start at the area length * the number of rows down
+    missingNums = [i for i in range(1, gridLength +1)]
     rowStart = int(areaLength * int(areaNum/areaLength))
     colStart = areaLength * (areaNum%areaLength)
     for r in range(rowStart,rowStart + areaLength):
         for c in range(colStart, colStart + areaLength):
             print("Checking row:", r, "and column:", c, end=" ")
-            if grid[r][c] == target:
-                print(" Target is in area")
+            if grid[r][c] != 0:
+                print(grid[r][c]," is in area")
+                missingNums.remove(grid[r][c])
             else:
-                print(" Not here")
+                print(" Nothing here")
+    print(missingNums)
+    return missingNums
+
+def findPossibilities(areaNum):
+    positions = {}
+    for i in missingNums:
+        positions.update({i:[]})
+        
+    
+    targetsFound = []
+    rowStart = int(areaLength * int(areaNum/areaLength))
+    colStart = areaLength * (areaNum%areaLength)
+    for r in range(rowStart,rowStart + areaLength):
+        for c in range(colStart, colStart + areaLength):
+            if grid[r][c] == 0:
+                targetsFound = [False for i in range(len(missingNums))]
+                for i in range(gridLength): #When this wasn't doing all of the numbers in one go, I could've made this a while, stopping if the target was found. Now, though, that would be a similar amount of iterating, if not more
+                    j =0
+                    for target in missingNums:
+                        if grid[i][c] == target: targetsFound[j] = True
+                        if grid[r][i] == target: targetsFound[j] = True
+                        j+=1
+                for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
+                    if not targetsFound[i]:
+                        positions.get(missingNums[i]).append([r,c])
+    print(positions)
+    return positions
 
 grid = [
     [0,0,0,1],
@@ -19,9 +48,22 @@ grid = [
     [3,0,0,0]
 ]
 gridLength = len(grid)
-# for row in grid:
-#     print(row)
+for row in grid:
+    print(row)
 areaLength = int(math.sqrt(gridLength))
-for i in range(4):
-    targetSearch(1,i)
+gridUpdated = True
+positions ={}
+while gridUpdated:
+    gridUpdated = False  
+    for areaNum in range(gridLength):
+        missingNums = targetSearch(areaNum)
+        if missingNums: # empty lists give a 0 value that can be read as false for ttruth statements
+            positions = findPossibilities(areaNum)
+            for num in positions:
+                if len(positions.get(num)) == 1:
+                    row, column = positions.get(num)[0][0], positions.get(num)[0][1]
+                    grid[row][column] = num
+                    gridUpdated = True
+    for row in grid:
+        print(row)
 
