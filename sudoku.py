@@ -1,4 +1,9 @@
 import math
+def printGrid():
+    for row in grid:
+        print(row)
+    print()
+
 #I'm changing this to just return a list of which numbers isn't the area, because that just makes this faster
 def targetSearch(areaNum): # Area num has to be 0 indexed for the integer division to work
     # the row number of the area will start at the area length * the number of rows down
@@ -7,13 +12,13 @@ def targetSearch(areaNum): # Area num has to be 0 indexed for the integer divisi
     colStart = areaLength * (areaNum%areaLength)
     for r in range(rowStart,rowStart + areaLength):
         for c in range(colStart, colStart + areaLength):
-            print("Checking row:", r, "and column:", c, end=" ")
+            #print("Checking row:", r, "and column:", c, end=" ")
             if grid[r][c] != 0:
-                print(grid[r][c]," is in area")
+                #print(grid[r][c]," is in area")
                 missingNums.remove(grid[r][c])
-            else:
-                print(" Nothing here")
-    print(missingNums)
+            #else:
+                #print(" Nothing here")
+    #print(missingNums)
     return missingNums
 
 def findPossibilities(areaNum):
@@ -38,18 +43,23 @@ def findPossibilities(areaNum):
                 for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
                     if not targetsFound[i]:
                         positions.get(missingNums[i]).append([r,c])
-    print(positions)
+    #print(positions)
     return positions
 
 grid = [
-    [0,0,0,1],
-    [0,2,0,0],
-    [0,0,4,0],
-    [3,0,0,0]
+    [7,0,0,0,3,4,8,0,0],
+    [8,0,4,6,0,0,0,0,0],
+    [0,3,9,0,5,0,0,0,0],
+    [1,0,0,5,0,0,6,0,0],
+    [0,4,0,7,0,9,0,3,0],
+    [0,0,3,0,0,8,0,0,9],
+    [0,0,0,0,7,0,3,2,0],
+    [0,2,6,0,0,1,9,0,5],
+    [0,0,7,9,2,0,0,0,4]
 ]
 gridLength = len(grid)
-for row in grid:
-    print(row)
+printGrid()
+
 areaLength = int(math.sqrt(gridLength))
 gridUpdated = True
 positions ={}
@@ -64,6 +74,21 @@ while gridUpdated:
                     row, column = positions.get(num)[0][0], positions.get(num)[0][1]
                     grid[row][column] = num
                     gridUpdated = True
-    for row in grid:
-        print(row)
+    #Now process of elimination afterwards
+    for r in range(gridLength):
+        for c in range(gridLength):
+            if grid[r][c] ==0:
+                
+                possibleNums = [i for i in range(1, gridLength+1)]
+                for i in range(gridLength):
+                    if grid[i][c] in possibleNums:
+                        possibleNums.remove(grid[i][c])
+                    if grid[r][i] in possibleNums:
+                        possibleNums.remove(grid[r][i])
+                if len(possibleNums) ==1:
+                    grid[r][c] = possibleNums[0]
+                gridUpdated = True
+
+    printGrid()
+    
 
