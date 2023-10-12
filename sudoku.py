@@ -4,7 +4,7 @@ def printGrid():
         print(row)
     print()
 
-#I'm changing this to just return a list of which numbers isn't the area, because that just makes this faster
+#changing this to just return a list of which numbers isn't in the area, because that just makes this faster
 def targetSearch(areaNum): # Area num has to be 0 indexed for the integer division to work
     # the row number of the area will start at the area length * the number of rows down
     missingNums = [i for i in range(1, gridLength +1)]
@@ -21,12 +21,11 @@ def targetSearch(areaNum): # Area num has to be 0 indexed for the integer divisi
     #print(missingNums)
     return missingNums
 
-def findPossibilities(areaNum):
+def findPossibilitiesAndElimination(areaNum):
     positions = {}
     for i in missingNums:
         positions.update({i:[]})
-        
-    
+    isUpdated = False
     targetsFound = []
     rowStart = int(areaLength * int(areaNum/areaLength))
     colStart = areaLength * (areaNum%areaLength)
@@ -34,17 +33,33 @@ def findPossibilities(areaNum):
         for c in range(colStart, colStart + areaLength):
             if grid[r][c] == 0:
                 targetsFound = [False for i in range(len(missingNums))]
+                possibleNums = [i for i in range(1, gridLength+1)]
                 for i in range(gridLength): #When this wasn't doing all of the numbers in one go, I could've made this a while, stopping if the target was found. Now, though, that would be a similar amount of iterating, if not more
+                    if grid[i][c] in possibleNums:
+                        possibleNums.remove(grid[i][c])
+                    if grid[r][i] in possibleNums:
+                        possibleNums.remove(grid[r][i])
                     j =0
                     for target in missingNums:
                         if grid[i][c] == target: targetsFound[j] = True
                         if grid[r][i] == target: targetsFound[j] = True
                         j+=1
-                for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
-                    if not targetsFound[i]:
-                        positions.get(missingNums[i]).append([r,c])
+                if len(possibleNums) ==1:
+                    grid[r][c] = possibleNums[0]
+                    if grid[r][c] in missingNums: #This was breaking it if an elimination happened while doing the other square method
+                        missingNums.remove(grid[r][c])
+                        positions.pop(grid[r][c])
+                    # print("AreaNum:", areaNum, "Elimination: filled at row", r, "Column", c)
+                    # printGrid()
+                    
+                    isUpdated = True
+                else:
+                    for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
+                        if not targetsFound[i]:
+                            positions.get(missingNums[i]).append([r,c])
+                
     #print(positions)
-    return positions
+    return positions, isUpdated
 
 grid = [
     [7,0,0,0,3,4,8,0,0],
@@ -67,28 +82,31 @@ while gridUpdated:
     gridUpdated = False  
     for areaNum in range(gridLength):
         missingNums = targetSearch(areaNum)
-        if missingNums: # empty lists give a 0 value that can be read as false for ttruth statements
-            positions = findPossibilities(areaNum)
+        if missingNums: # empty lists give a 0 value that can be read as false for truth statements
+            positions, isUpdated = findPossibilitiesAndElimination(areaNum)
+            if isUpdated:
+                gridUpdated = True
             for num in positions:
                 if len(positions.get(num)) == 1:
                     row, column = positions.get(num)[0][0], positions.get(num)[0][1]
                     grid[row][column] = num
+                    # print("AreaNum:", areaNum, "Square method at row",row,"Column",column)
+                    # printGrid()
+                    
                     gridUpdated = True
     #Now process of elimination afterwards
-    for r in range(gridLength):
-        for c in range(gridLength):
-            if grid[r][c] ==0:
+    # for r in range(gridLength):
+    #     for c in range(gridLength):
+    #         if grid[r][c] ==0:
                 
-                possibleNums = [i for i in range(1, gridLength+1)]
-                for i in range(gridLength):
-                    if grid[i][c] in possibleNums:
-                        possibleNums.remove(grid[i][c])
-                    if grid[r][i] in possibleNums:
-                        possibleNums.remove(grid[r][i])
-                if len(possibleNums) ==1:
-                    grid[r][c] = possibleNums[0]
-                gridUpdated = True
+    #             possibleNums = [i for i in range(1, gridLength+1)]
+    #             for i in range(gridLength):
+    #                 if grid[i][c] in possibleNums:
+    #                     possibleNums.remove(grid[i][c])
+    #                 if grid[r][i] in possibleNums:
+    #                     possibleNums.remove(grid[r][i])
+    #             if len(possibleNums) ==1:
+    #                 grid[r][c] = possibleNums[0]
+    #                 gridUpdated = True
 
     printGrid()
-    
-
