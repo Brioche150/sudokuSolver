@@ -57,6 +57,7 @@ def findPossibilitiesAndElimination(areaNum):
                     for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
                         if not targetsFound[i]:
                             positions.get(missingNums[i]).append([r,c])
+
                 
     #print(positions)
     return positions, isUpdated
@@ -76,16 +77,16 @@ gridLength = len(grid)
 printGrid()
 
 areaLength = int(math.sqrt(gridLength))
-gridUpdated = True
+updatedByScanning = True
 positions ={}
-while gridUpdated:
-    gridUpdated = False  
+while updatedByScanning:
+    updatedByScanning = False  
     for areaNum in range(gridLength):
         missingNums = targetSearch(areaNum)
         if missingNums: # empty lists give a 0 value that can be read as false for truth statements
             positions, isUpdated = findPossibilitiesAndElimination(areaNum)
             if isUpdated:
-                gridUpdated = True
+                updatedByScanning = True
             for num in positions:
                 if len(positions.get(num)) == 1:
                     row, column = positions.get(num)[0][0], positions.get(num)[0][1]
@@ -93,20 +94,11 @@ while gridUpdated:
                     # print("AreaNum:", areaNum, "Square method at row",row,"Column",column)
                     # printGrid()
                     
-                    gridUpdated = True
-    #Now process of elimination afterwards
-    # for r in range(gridLength):
-    #     for c in range(gridLength):
-    #         if grid[r][c] ==0:
-                
-    #             possibleNums = [i for i in range(1, gridLength+1)]
-    #             for i in range(gridLength):
-    #                 if grid[i][c] in possibleNums:
-    #                     possibleNums.remove(grid[i][c])
-    #                 if grid[r][i] in possibleNums:
-    #                     possibleNums.remove(grid[r][i])
-    #             if len(possibleNums) ==1:
-    #                 grid[r][c] = possibleNums[0]
-    #                 gridUpdated = True
-
+                    updatedByScanning = True
     printGrid()
+#I'm going to put all of the possible positions in the coordinates, rather than just a number
+incomplete = [False for row in grid if R[]]
+if incomplete:
+    for areaNum in range(gridLength):
+
+    
