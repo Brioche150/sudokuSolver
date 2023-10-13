@@ -70,6 +70,7 @@ def findPossibilities(areaNum, eliminate= False):
                         if not targetsFound[i]:
                             positions[missingNums[i]].append([r,c])
 
+
                 
     #print(positions)
     if eliminate: return positions, isUpdated
