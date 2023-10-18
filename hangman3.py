@@ -30,8 +30,10 @@ end if
 This could all be wrapped in another while to let them go again
 '''
 import random
-words = ["yellow","blueberry","yodel","pleb","benefactor","electrifying"]
-word = words[random.randint(0,len(words) -1)]
+f = open("EnglishWords.txt")
+
+words = f.readlines()
+word = words[random.randint(0,len(words) -1)].strip()
 wrongGuesses = 6
 answer = "-" * len(word)
 while wrongGuesses > 0 and answer != word:
@@ -52,7 +54,7 @@ while wrongGuesses > 0 and answer != word:
     else:
         answer = temp
         print("Good Guess!")
-        
+
 if answer == word:
     print("Congratulations! You won!")
 else:
