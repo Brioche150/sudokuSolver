@@ -77,7 +77,7 @@ def findPossibilities(areaNum, eliminate= False):
     else: return positions
 
 grid = [
-    [7,0,0,0,3,4,8,0,0],
+    [0,0,0,0,3,4,8,0,0],
     [8,0,4,6,0,0,0,0,0],
     [0,3,9,0,5,0,0,0,0],
     [1,0,0,5,0,0,6,0,0],
@@ -121,8 +121,6 @@ while gridUpdated:
         printGrid()
     #I'm going to put all of the possible positions in the coordinates, rather than just a number
     
-    #Currently a bug of running forever if it gets here. Flags are being set to true when they shouldn't be.
-    
     incomplete = [True for row in grid if 0 in row]
     if incomplete:
         prevConfirmedNumInCol = confirmedNumInCol.copy()
@@ -145,5 +143,13 @@ while gridUpdated:
         if prevConfirmedNumInCol != confirmedNumInCol  or prevConfirmedNumInRow != confirmedNumInRow: 
             updatedByScanning = gridUpdated = True
             #NumInRow and Col determines if certain numbers only fit in a certain row or column,as if that is the case, the length of the set will be 1
-        
+    
+    ''' Now I need to do things with naked pairs or maybe n-lets
+    How to figure this?
+    Look at the possible locations for each number. This will be a list of coordinates. Might have to make it a set of coordinates to be able to compare them better
+    One way is to compare every number with every other number, look at their sets of coords, see if they match up (may have to check if it's IN, rather than equal another number's set). 
+    If they do match up, put a set of those numbers into those grid coordinates, and have a check for everything else, so basically the program can't try to put any other number in there.
+    How to do triplets and higher/ recognise multiple pairs in a pass? When matching coords are found, add it to a list, then for every other number, check it against that list first, if not, then go through the other numbers looking for it 
+    Once I identify naked pairs/n-lets, put that set of numbers into a grid location, instead of just a number, and for every other comparison, do if num in grid[r][c] 
+    '''
     
