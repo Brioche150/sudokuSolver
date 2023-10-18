@@ -26,15 +26,79 @@ if answer == word
 else
     output("Unlucky. Better luck next time")
 end if
-
-This could all be wrapped in another while to let them go again
 '''
 import random
+hangmanStages = ['''
+      +
+      |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+      |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+      |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ /    |
+      |
+=========''', '''
+  +---+
+  |   |
+  O   |
+ /|\  |
+ / \  |
+      |
+=========''']
+# ASCII art by Chris Horton, found on this github page: https://gist.github.com/chrishorton/8510732aa9a80a03c829b09f12e20d9c
+
 replay ="y"
 while replay in ["y","Y","yes","Yes","YES"]:
     difficulty =0
-    while difficulty <1 or difficulty >3:
-        difficulty = int(input("Please choose the difficulty you would like\n1. Easy\n2. Medium\n3. Hard\n"))
+    while difficulty <1 or difficulty >4:
+        difficulty = int(input("Please choose the difficulty you would like\n1. Easy\n2. Medium\n3. Hard\n4. Customise word length\n"))
     maxLength = minLength =0
     match difficulty:
         case 1:
@@ -43,9 +107,13 @@ while replay in ["y","Y","yes","Yes","YES"]:
         case 2:
             minLength =6
             maxLength =9
-        case _:
+        case 3:
             minLength =1
             maxLength =5
+        case _:
+            minLength = int(input("Please enter the minimum length of the word to guess: "))
+            maxLength = int(input("Please enter the maximum length of the word to guess: "))
+    
     words =[]
     with open("EnglishWords.txt") as f:
         for line in f:
@@ -54,8 +122,9 @@ while replay in ["y","Y","yes","Yes","YES"]:
                 words.append(word) 
 
     word = words[random.randint(0,len(words) -1)].strip()
-    wrongGuesses = 10
+    wrongGuesses = 8
     answer = "-" * len(word)
+    print(hangmanStages[8 - wrongGuesses])
     while wrongGuesses > 0 and answer != word:
         print("\nYou have %d wrong guesses left" % wrongGuesses)
         print("The word to guess is: " + answer)
@@ -71,10 +140,12 @@ while replay in ["y","Y","yes","Yes","YES"]:
         if(answer == temp):
             wrongGuesses -=1
             print("You guessed wrong")
+            print(hangmanStages[8 - wrongGuesses])
         else:
             answer = temp
             print("Good Guess!")
 
+    print("\n\n")
     if answer == word:
         print("Congratulations! You won!")
     else:
