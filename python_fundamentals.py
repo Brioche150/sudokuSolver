@@ -132,7 +132,6 @@ class Basics:#(s)
         input_text = input_text.strip() # This removes the leading space to avoid having strip give the first 'word' as a blank string
         words = input_text.split()
         return words[6][3]
-        # The funny one-liner is return input_text.strip().split()[6][3]
         
 
     # ---Section 3 --- #
@@ -148,7 +147,7 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return input_text.lower()
 
     #(Question:b)
     def reverse_paragraph(self):#(s)
@@ -196,8 +195,7 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    txt = basics.read_file()
-    print(basics.fourth_letter_seventh_word())
+    print(basics.convert_to_lower_case())
     
 
     
