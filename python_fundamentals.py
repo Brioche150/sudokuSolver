@@ -53,7 +53,7 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return "apple" in input_text.lower()
 
     #(Question:c)
     def if_upper_case_exists(self):#(s)
@@ -181,6 +181,6 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.length_of_file())
+    print(basics.if_apple())
 
     
