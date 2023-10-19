@@ -13,7 +13,7 @@ def targetSearch(areaNum): # Area num has to be 0 indexed for the integer divisi
     for r in range(rowStart,rowStart + areaLength):
         for c in range(colStart, colStart + areaLength):
             #print("Checking row:", r, "and column:", c, end=" ")
-            if grid[r][c] != 0:
+            if grid[r][c] !=0 and type(grid[r][c]) != set:
                 #print(grid[r][c]," is in area")
                 missingNums.remove(grid[r][c])
             #else:
@@ -22,6 +22,7 @@ def targetSearch(areaNum): # Area num has to be 0 indexed for the integer divisi
     return missingNums
 
 def elimination(r,c, i, possibleNums):
+    
     if grid[i][c] in possibleNums:
         possibleNums.remove(grid[i][c])
     if grid[r][i] in possibleNums:
@@ -29,32 +30,27 @@ def elimination(r,c, i, possibleNums):
     return possibleNums
 
 def findPossibilities(areaNum, eliminate= False):
+    positions = {}
     for i in missingNums:
         positions.update({i:[]})
     isUpdated = False
-    targetsFound = []
     rowStart = int(areaLength * int(areaNum/areaLength))
     colStart = areaLength * (areaNum%areaLength)
     for r in range(rowStart,rowStart + areaLength):
         for c in range(colStart, colStart + areaLength):
-            if grid[r][c] == 0:
-                targetsFound = [False for i in range(len(missingNums))]
-                if eliminate:
-                    possibleNums = [i for i in range(1, gridLength+1)]
+            if grid[r][c] not in range(1,gridLength+1): # used to be if grid[r][c] == 0, but I have to account for sets now
+                        
+                
+                if type(grid[r][c]) == set:
+                    possibleNums = list(grid[r][c])
+                else:
+                    possibleNums = missingNums.copy() #
                 for i in range(gridLength): #When this wasn't doing all of the numbers in one go, I could've made this a while loop, stopping if the target was found. Now, though, that would be a similar amount of iterating, if not more
-                    if eliminate:
-                        possibleNums = elimination(r,c,i,possibleNums)
-                    
-                    j =0
-                    for target in missingNums:
-                        if ((target,c) in confirmedNumInCol and confirmedNumInCol[(target,c)] != areaNum) or ((target,r) in confirmedNumInRow and confirmedNumInRow[(target,r)] != areaNum): # Under these conditions you can't do it
-                            j+=1 #This is in the case that it is trying to find a space for a number. If there is confirmed a number in that row or column, then that number can't be placed here. The areaNum is to check that it isn't marking a confirmed one in the area, and stop assignments.
-                            continue
-                        else:
-                            if grid[i][c] == target: 
-                                targetsFound[j] = True
-                            if grid[r][i] == target: targetsFound[j] = True
-                        j+=1
+                    possibleNums = elimination(r,c,i,possibleNums)
+                for target in possibleNums:
+                    if ((target,c) in confirmedNumInCol and confirmedNumInCol[(target,c)] != areaNum) or ((target,r) in confirmedNumInRow and confirmedNumInRow[(target,r)] != areaNum): # Under these conditions you can't do think the number is there
+                        #This is in the case that it is trying to find a space for a number. If there is confirmed a number in that row or column, then that number can't be placed here. The areaNum is to check that it isn't marking a confirmed one in the area, and stop assignments.
+                        possibleNums.remove(target)
                         
                 if eliminate and len(possibleNums) ==1:
                     grid[r][c] = possibleNums[0]
@@ -66,13 +62,9 @@ def findPossibilities(areaNum, eliminate= False):
                     isUpdated = True
                     
                 else:
-                    for i in range(len(targetsFound)): #So if that number never turned up, then add that number and its coordinates to the dictionary.
-                        if not targetsFound[i]:
-                            positions[missingNums[i]].append([r,c])
+                    for i in possibleNums: #So if that number never turned up, then add that number and its coordinates to the dictionary.
+                            positions[i].append((r,c))
 
-
-                
-    #print(positions)
     if eliminate: return positions, isUpdated
     else: return positions
 
@@ -97,10 +89,8 @@ confirmedNumInRow = {}
 confirmedNumInCol = {}
 gridUpdated = True
 while gridUpdated:
-    positions ={}
     gridUpdated = False
     while updatedByScanning:
-        positions ={}
         updatedByScanning = False  
         for areaNum in range(gridLength):
             missingNums = targetSearch(areaNum)
@@ -118,6 +108,7 @@ while gridUpdated:
                         # printGrid()
                         updatedByScanning = True
                         
+                        
         printGrid()
     #I'm going to put all of the possible positions in the coordinates, rather than just a number
     
@@ -128,8 +119,12 @@ while gridUpdated:
         for areaNum in range(gridLength):
             numInRow = {}
             numInCol = {}
+            missingNums = targetSearch(areaNum) 
             positions  = findPossibilities(areaNum)
+            nums = list(positions.keys()) # Needed for the pairs/ n-lets
+            nakedPairs = {} # nLets will make a dictionary of all coordinate sets
             for num in positions: # So this loop will go through and make a list of every possible number that could go in each coordinate.
+                
                 numInRow.update({num:set()}) # Some lovely sets here, since a number could appear multiple times in the same row or column, and that would be the point of this detection system
                 numInCol.update({num:set()})
                 for coord in positions[num]:
@@ -140,16 +135,37 @@ while gridUpdated:
                     confirmedNumInCol.update({(num, column): areaNum})
                 if len(numInRow[num]) ==1:
                     confirmedNumInRow.update({(num,row): areaNum}) # would put numInRow[num].pop(), but if there's only one, then row has only been taking one value, and it's fine
+                
+                ''' Now I need to do things with naked pairs or maybe n-lets
+                How to figure this?
+                Look at the possible locations for each number. This will be a list of coordinates. Might have to make it a set of coordinates to be able to compare them better
+                One way is to compare every number with every other number, look at their sets of coords, see if they match up (may have to check if it's IN, rather than equal another number's set). 
+                If they do match up, put a set of those numbers into those grid coordinates, and have a check for everything else, so basically the program can't try to put any other number in there.
+                How to do triplets and higher/ recognise multiple pairs in a pass? When matching coords are found, add it to a list, then for every other number, check it against that list first, if not, then go through the other numbers looking for it 
+                Once I identify naked pairs/n-lets, put that set of numbers into a grid location, instead of just a number, and for every other comparison, do if num in grid[r][c] 
+                There are scenarios where two numbers will have the same possible coordinates, and another number shares 2 of them
+                '''
+                if not tuple(positions[num]) in nakedPairs:
+                    temp = set()
+                    temp.add(num)
+                    nakedPairs[tuple(positions[num])] = temp
+                tempNums = nums.copy()
+                for otherNum in tempNums:
+                    if num == otherNum:
+                        nums.remove(num)
+                    elif len(positions[num]) ==2 and positions[num] == positions[otherNum]:
+                        nakedPairs[tuple(positions[num])].add(otherNum)
+                                
+            #Now to deal with the nakedPairs. If there is a set of coordinates that multiple numbers can go to, then they will be a naked n-let.
+            #This set of numbers will be put into the grid, so that the only numbers that can occupy that spot are ones in that set
+            for coords in nakedPairs:
+                if len(nakedPairs[coords]) > 1:
+                    for coord in coords:
+                        grid[coord[0]][coord[1]] = nakedPairs[coords]
+                    updatedByScanning = gridUpdated = True
+                
         if prevConfirmedNumInCol != confirmedNumInCol  or prevConfirmedNumInRow != confirmedNumInRow: 
             updatedByScanning = gridUpdated = True
             #NumInRow and Col determines if certain numbers only fit in a certain row or column,as if that is the case, the length of the set will be 1
     
-    ''' Now I need to do things with naked pairs or maybe n-lets
-    How to figure this?
-    Look at the possible locations for each number. This will be a list of coordinates. Might have to make it a set of coordinates to be able to compare them better
-    One way is to compare every number with every other number, look at their sets of coords, see if they match up (may have to check if it's IN, rather than equal another number's set). 
-    If they do match up, put a set of those numbers into those grid coordinates, and have a check for everything else, so basically the program can't try to put any other number in there.
-    How to do triplets and higher/ recognise multiple pairs in a pass? When matching coords are found, add it to a list, then for every other number, check it against that list first, if not, then go through the other numbers looking for it 
-    Once I identify naked pairs/n-lets, put that set of numbers into a grid location, instead of just a number, and for every other comparison, do if num in grid[r][c] 
-    '''
-    
+        
