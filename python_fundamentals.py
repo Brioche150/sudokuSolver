@@ -40,7 +40,7 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return len(input_text)
 
     #(Question:b)
     def if_apple(self):#(s)
@@ -181,6 +181,6 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.read_file())
+    print(basics.length_of_file())
 
     
