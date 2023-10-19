@@ -25,6 +25,7 @@ class Basics:#(s)
         with open("text.txt") as file:
             paragraph = file.readline() # I use readline, not read, because it wants a paragraph
         return paragraph
+        pass
     
     # ---Section 2 --- #
 
@@ -40,6 +41,7 @@ class Basics:#(s)
         #Your code here
 
         return len(input_text)
+        pass
 
     #(Question:b)
     def if_apple(self):#(s)
@@ -53,6 +55,7 @@ class Basics:#(s)
         #Your code here
 
         return "apple" in input_text.lower()
+        pass
 
     #(Question:c)
     def if_upper_case_exists(self):#(s)
@@ -70,6 +73,7 @@ class Basics:#(s)
             if letter.isupper():
                 isUpper = True
         return isUpper
+        pass
 
     #(Question:d)
     def if_numbers_exist(self):#(s)
@@ -87,6 +91,7 @@ class Basics:#(s)
             if letter.isnumeric():
                 isNumeric = True
         return isNumeric
+        pass
 
     #(Question:e)
     def if_spaces_exist(self):#(s)
@@ -100,6 +105,7 @@ class Basics:#(s)
         #Your code here
         #I want regex so badly
         return (" " in input_text or "\t" in input_text or "\n" in input_text or "\r" in input_text or "\f" in input_text or "\v" in input_text)
+        pass
 
     #(Question:f)
     def if_first_letter_t(self):#(s)
@@ -119,6 +125,7 @@ class Basics:#(s)
                 else:
                     return False
         return False # If there just isn't a letter there
+        pass
     
     #(Question:g)
     def fourth_letter_seventh_word(self):#(s)
@@ -134,7 +141,7 @@ class Basics:#(s)
         input_text = input_text.strip() # This removes the leading space to avoid having strip give the first 'word' as a blank string
         words = input_text.split()
         return words[6][3]
-        
+        pass
 
     # ---Section 3 --- #
 
@@ -150,6 +157,7 @@ class Basics:#(s)
         #Your code here
 
         return input_text.lower()
+        pass
 
     #(Question:b)
     def reverse_paragraph(self):#(s)
@@ -163,6 +171,7 @@ class Basics:#(s)
         #Your code here
 
         return input_text[::-1]
+        pass
 
     #(Question:c)
     def duplicate_and_concatenate_paragraph(self):#(s)
@@ -177,6 +186,7 @@ class Basics:#(s)
         #Your code here
 
         return input_text *2
+        pass
 
     #(Question:d)
     def remove_whitespace_from_paragraph(self):#(s)
@@ -191,6 +201,7 @@ class Basics:#(s)
         #Your code here
 
         return input_text.strip()
+        pass
 
 if __name__ == '__main__':#(s)
     #You can place any ad-hoc testing here
