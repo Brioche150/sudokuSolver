@@ -83,7 +83,11 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        isNumeric= False
+        for letter in input_text:
+            if letter.isnumeric():
+                isNumeric = True
+        return isNumeric
 
     #(Question:e)
     def if_spaces_exist(self):#(s)
@@ -185,6 +189,6 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.if_upper_case_exists())
+    print(basics.if_numbers_exist())
 
     
