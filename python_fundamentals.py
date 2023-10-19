@@ -190,14 +190,14 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return input_text.strip()
 
 if __name__ == '__main__':#(s)
     #You can place any ad-hoc testing here
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
-    basics = Basics()
-    print(basics.duplicate_and_concatenate_paragraph())
+    
+    pass
     
 
     
