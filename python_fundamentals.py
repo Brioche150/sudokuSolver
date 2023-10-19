@@ -113,10 +113,12 @@ class Basics:#(s)
         #Your code here
 
         for char in input_text:
-            if char.isalpha() and char.lower() == "t":
-                return True
-            else:
-                return False
+            if char.isalpha():
+                if char.lower() == "t":
+                    return True
+                else:
+                    return False
+        return False # If there just isn't a letter there
     
     #(Question:g)
     def fourth_letter_seventh_word(self):#(s)
@@ -160,7 +162,7 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return input_text[::-1]
 
     #(Question:c)
     def duplicate_and_concatenate_paragraph(self):#(s)
@@ -195,7 +197,7 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.convert_to_lower_case())
+    print(basics.reverse_paragraph())
     
 
     
