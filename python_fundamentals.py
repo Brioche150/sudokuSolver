@@ -112,7 +112,11 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        for char in input_text:
+            if char.isalpha() and char.lower() == "t":
+                return True
+            else:
+                return False
     
     #(Question:g)
     def fourth_letter_seventh_word(self):#(s)
@@ -125,7 +129,11 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        input_text = input_text.strip() # This removes the leading space to avoid having strip give the first 'word' as a blank string
+        words = input_text.split()
+        return words[6][3]
+        # The funny one-liner is return input_text.strip().split()[6][3]
+        
 
     # ---Section 3 --- #
 
@@ -188,7 +196,8 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.if_spaces_exist())
+    txt = basics.read_file()
+    print(basics.fourth_letter_seventh_word())
     
 
     
