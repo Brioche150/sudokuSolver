@@ -23,7 +23,7 @@ class Basics:#(s)
         """
         #Your code here
         with open("text.txt") as file:
-            paragraph = file.readline()
+            paragraph = file.readline() # I use readline, not read, because it wants a paragraph
         return paragraph
     
     # ---Section 2 --- #
@@ -176,7 +176,7 @@ class Basics:#(s)
         input_text = self.read_file()#(s)
         #Your code here
 
-        pass
+        return input_text *2
 
     #(Question:d)
     def remove_whitespace_from_paragraph(self):#(s)
@@ -197,7 +197,7 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.reverse_paragraph())
+    print(basics.duplicate_and_concatenate_paragraph())
     
 
     
