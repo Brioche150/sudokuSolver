@@ -11,7 +11,6 @@ NOTE: You can create as many more methods as you need. However, you need to add
 self as a parameter of the new method and  to call it with the prefix self.name 
 
 """
-
 class Basics:#(s)
     # ---Section 1 --- #
 
@@ -99,8 +98,8 @@ class Basics:#(s)
         """
         input_text = self.read_file()#(s)
         #Your code here
-
-        pass
+        #I want regex so badly
+        return (" " in input_text or "\t" in input_text or "\n" in input_text or "\r" in input_text or "\f" in input_text or "\v" in input_text)
 
     #(Question:f)
     def if_first_letter_t(self):#(s)
@@ -189,6 +188,7 @@ if __name__ == '__main__':#(s)
     #i.e test = remove_whitespace_from_paragraph()
     #i.e print(test)
     basics = Basics()
-    print(basics.if_numbers_exist())
+    print(basics.if_spaces_exist())
+    
 
     
