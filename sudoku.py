@@ -21,16 +21,31 @@ def targetSearch(areaNum): # Area num has to be 0 indexed for the integer divisi
     #print(missingNums)
     return missingNums
 
-def elimination(r,c, i, possibleNums):
+def elimination(r,c, possibleNums):
     
-    if grid[i][c] in possibleNums:
-        possibleNums.remove(grid[i][c])
-    if grid[r][i] in possibleNums:
-        possibleNums.remove(grid[r][i])
+    for i in range(gridLength):
+        if grid[i][c] in possibleNums:
+            possibleNums.remove(grid[i][c])
+        if grid[r][i] in possibleNums:
+            possibleNums.remove(grid[r][i])
+    return possibleNums
+
+def reduceOptions(r,c, possibleNums):
+            
+    if type(grid[r][c]) == set:
+        possibleNums = list(grid[r][c])
+    else:
+        possibleNums = missingNums.copy() #
+    possibleNums = elimination(r,c,possibleNums)
+    for target in possibleNums:
+        if ((target,c) in confirmedNumInCol and confirmedNumInCol[(target,c)] != areaNum) or ((target,r) in confirmedNumInRow and confirmedNumInRow[(target,r)] != areaNum): # Under these conditions you can't do think the number is there
+            #This is in the case that it is trying to find a space for a number. If there is confirmed a number in that row or column, then that number can't be placed here. The areaNum is to check that it isn't marking a confirmed one in the area, and stop assignments.
+            possibleNums.remove(target)
     return possibleNums
 
 def findPossibilities(areaNum, eliminate= False):
     positions = {}
+    possibleNums =[]
     for i in missingNums:
         positions.update({i:[]})
     isUpdated = False
@@ -39,18 +54,7 @@ def findPossibilities(areaNum, eliminate= False):
     for r in range(rowStart,rowStart + areaLength):
         for c in range(colStart, colStart + areaLength):
             if grid[r][c] not in range(1,gridLength+1): # used to be if grid[r][c] == 0, but I have to account for sets now
-                        
-                
-                if type(grid[r][c]) == set:
-                    possibleNums = list(grid[r][c])
-                else:
-                    possibleNums = missingNums.copy() #
-                for i in range(gridLength): #When this wasn't doing all of the numbers in one go, I could've made this a while loop, stopping if the target was found. Now, though, that would be a similar amount of iterating, if not more
-                    possibleNums = elimination(r,c,i,possibleNums)
-                for target in possibleNums:
-                    if ((target,c) in confirmedNumInCol and confirmedNumInCol[(target,c)] != areaNum) or ((target,r) in confirmedNumInRow and confirmedNumInRow[(target,r)] != areaNum): # Under these conditions you can't do think the number is there
-                        #This is in the case that it is trying to find a space for a number. If there is confirmed a number in that row or column, then that number can't be placed here. The areaNum is to check that it isn't marking a confirmed one in the area, and stop assignments.
-                        possibleNums.remove(target)
+                possibleNums = reduceOptions(r,c,possibleNums)
                         
                 if eliminate and len(possibleNums) ==1:
                     grid[r][c] = possibleNums[0]
@@ -143,13 +147,15 @@ while gridUpdated:
     if incomplete:
         prevConfirmedNumInCol = confirmedNumInCol.copy()
         prevConfirmedNumInRow = confirmedNumInRow.copy()
+        nakedPairs = {}
         for areaNum in range(gridLength):
             numInRow = {}
             numInCol = {}
             missingNums = targetSearch(areaNum) 
             positions  = findPossibilities(areaNum)
+            
             nums = list(positions.keys()) # Needed for the pairs/ n-lets
-            nakedPairs = {} # nLets will make a dictionary of all coordinate sets
+             # nakedPairs will make a dictionary of all coordinate sets, and the numbers which have them. 
             for num in positions: # So this loop will go through and make a list of every possible number that could go in each coordinate.
                 
                 numInRow.update({num:set()}) # Some lovely sets here, since a number could appear multiple times in the same row or column, and that would be the point of this detection system
@@ -180,19 +186,99 @@ while gridUpdated:
                 for otherNum in tempNums:
                     if num == otherNum:
                         nums.remove(num)
-                    elif len(positions[num]) ==2 and positions[num] == positions[otherNum]:
+                    elif len(positions[num]) ==2 and positions[num] == positions[otherNum]: # This is looking to see if there is an entry with a key of two coordinates, with two different numbers that can only go in those coordinates.
                         nakedPairs[tuple(positions[num])].add(otherNum)
                                 
             #Now to deal with the nakedPairs. If there is a set of coordinates that multiple numbers can go to, then they will be a naked n-let.
             #This set of numbers will be put into the grid, so that the only numbers that can occupy that spot are ones in that set
-            for coords in nakedPairs:
-                if len(nakedPairs[coords]) > 1:
-                    for coord in coords:
+            
+            
+        for coords in nakedPairs:
+            if len(nakedPairs[coords]) > 1:
+                for coord in coords:
+                    if(grid[coord[0]][coord[1]] != nakedPairs[coords]):
                         grid[coord[0]][coord[1]] = nakedPairs[coords]
-                    updatedByScanning = gridUpdated = True
+                        updatedByScanning = gridUpdated = True
                 
         if prevConfirmedNumInCol != confirmedNumInCol  or prevConfirmedNumInRow != confirmedNumInRow: 
             updatedByScanning = gridUpdated = True
             #NumInRow and Col determines if certain numbers only fit in a certain row or column,as if that is the case, the length of the set will be 1
-    
+
+        # this finds naked pairs in rows
+        
+        areaNum = -1
+        possibleNums = []
+        nakedPairs = {}
+        
+        for row in range(gridLength):
+            positions = {}
+            
+            for col in range(gridLength):
+                tempAreaNum = int(row / areaLength) * areaLength + int(col / areaLength)
+                if areaNum != tempAreaNum:
+                    areaNum = tempAreaNum
+                    missingNums = targetSearch(areaNum)
+                    for i in missingNums:
+                        if not i in positions:
+                            positions.update({i:[]})
+                            
+                if grid[row][col] not in range(1,gridLength+1): 
+                    possibleNums = reduceOptions(row,col,possibleNums)
+                    for i in possibleNums: #So if that number never turned up, then add that number and its coordinates to the dictionary.
+                        positions[i].append((row,col))
+        
+            nums = list(positions.keys())
+            for num in positions:        
+                    if not tuple(positions[num]) in nakedPairs: # the coordinates are the key, 
+                        temp = set()
+                        temp.add(num)
+                        nakedPairs[tuple(positions[num])] = temp
+                    tempNums = nums.copy()
+                    for otherNum in tempNums:
+                        if num == otherNum:
+                            nums.remove(num)
+                        elif len(positions[num]) ==2 and positions[num] == positions[otherNum]:
+                            nakedPairs[tuple(positions[num])].add(otherNum)
+        
+        # Now to find naked pairs in the columns. I don't have to clear naked pairs since they can't possibly make the same coordinate pairs
+        areaNum = -1
+        possibleNums = []
+        positions = {}
+        for col in range(gridLength):
+            positions = {}
+            
+            for row in range(gridLength):
+                tempAreaNum = int(row / areaLength) * areaLength + int(col / areaLength)
+                if areaNum != tempAreaNum:
+                    areaNum = tempAreaNum
+                    missingNums = targetSearch(areaNum)
+                    for i in missingNums:
+                        if not i in positions:
+                            positions.update({i:[]})
+                            
+                if grid[row][col] not in range(1,gridLength+1): 
+                    possibleNums = reduceOptions(row,col,possibleNums)
+                    for i in possibleNums: #So if that number never turned up, then add that number and its coordinates to the dictionary.
+                        positions[i].append((row,col))
+        
+            nums = list(positions.keys())
+            for num in positions:        
+                    if not tuple(positions[num]) in nakedPairs: # the coordinates are the key, 
+                        temp = set()
+                        temp.add(num)
+                        nakedPairs[tuple(positions[num])] = temp
+                    tempNums = nums.copy()
+                    for otherNum in tempNums:
+                        if num == otherNum:
+                            nums.remove(num)
+                        elif len(positions[num]) ==2 and positions[num] == positions[otherNum]:
+                            nakedPairs[tuple(positions[num])].add(otherNum)
+        for coords in nakedPairs:
+            if len(nakedPairs[coords]) > 1:
+                for coord in coords:
+                    if(grid[coord[0]][coord[1]] != nakedPairs[coords]):
+                        grid[coord[0]][coord[1]] = nakedPairs[coords]
+                        updatedByScanning = gridUpdated = True
+                        
+        printGrid()
         
