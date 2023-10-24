@@ -27,5 +27,10 @@ def inputWords():
             words.append(word.lower())
     return words
 
-myWords = inputWords()
-print(myWords)
+def displayWords():
+    for word in words:
+        print(word, end =" ")
+    print()
+
+words = wordList()
+displayWords()
