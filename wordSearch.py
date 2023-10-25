@@ -32,5 +32,29 @@ def displayWords():
         print(word, end =" ")
     print()
 
+def printGrid():
+    for row in grid:
+        print(row)
+
+def generateGrid():
+    height = width =0
+    while(height < longestLength):
+        height = int(input("Please enter the height of the grid you would like: "))
+        if(height < longestLength):
+            print("The height must be greater than or equal to the length of the longest word in the list.")
+    while(width < longestLength):
+        width = int(input("Please enter the width of the grid you would like: "))
+        if(width < longestLength):
+            print("The width must be greater than or equal to the length of the longest word in the list.")
+    grid =[[" "] * width for i in range(height)]
+    return grid
+
+
 words = wordList()
 displayWords()
+longestLength = 0
+for word in words:
+    if len(word) > longestLength:
+        longestLength = len(word) 
+grid = generateGrid()
+printGrid()
