@@ -28,9 +28,10 @@ def inputWords():
     return words
 
 def displayWords():
+    print("\n\nThe list of words is: ")
     for word in words:
         print(word, end =" ")
-    print()
+    print("\n\n")
 
 def printGrid():
     for row in grid:
@@ -95,13 +96,22 @@ def placeWord(word):
             for i in range(len(word)):
                 grid[row-i][col] = word[i]
     
-        
-
 def placeWords():
     for word in words:
         placeWord(word)
 
-words = wordList()
+def randomGridFill():
+    # I'm going to add random letters based on the frequency of letters in the word list
+    allLetters = ""
+    for word in words:
+        allLetters += word
+            
+    for row in grid:
+        for i in range(len(row)):
+            if row[i] == " ":
+                row[i] = allLetters[random.randint(0, len(allLetters) -1 )]
+
+words = inputWords()
 displayWords()
 longestLength = 0
 for word in words:
@@ -113,5 +123,5 @@ width = len(grid[0])
 printGrid()
 placeWords()
 printGrid()
-print(height)
-print(len(grid))
+randomGridFill()
+printGrid()
