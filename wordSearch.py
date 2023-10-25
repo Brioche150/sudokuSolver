@@ -10,7 +10,7 @@ Store where each word starts and what direction it goes in.
 Then, print the grid and show the words to guess.
 When they guess it right, change the letters to capitals or some other signifier.
 '''
-import re
+import re, random
 def wordList():
     return ["happy", "cheerful", "chipper", "effervescent", "jaunty", "jolly"]
 
@@ -34,7 +34,12 @@ def displayWords():
 
 def printGrid():
     for row in grid:
-        print(row)
+        print("[", end =" ")
+        for item in row:
+            print(item, end = " ")
+        print("]", end =" ")
+        print()
+    print("\n\n")
 
 def generateGrid():
     height = width =0
@@ -49,6 +54,52 @@ def generateGrid():
     grid =[[" "] * width for i in range(height)]
     return grid
 
+def wordWIllFit(col, row, word, direction):
+    # 1 will go right, 2 down, 3 left, 4 up
+    match direction:
+        case 1:
+            for i in range(len(word)):
+                if col + i >= width or (grid[row][col +i] != word[i] and grid[row][col +i] != " "):
+                    return False
+        case 2:
+            for i in range(len(word)):
+                if row + i >= height or (grid[row+i][col] != word[i] and grid[row+i][col] != " "):
+                    return False
+        case 3:
+            for i in range(len(word)):
+                if col - i < 0 or (grid[row][col -i] != word[i] and grid[row][col -i] != " "):
+                    return False
+        case 4:
+            for i in range(len(word)):
+                if row - i < 0 or (grid[row-i][col] != word[i] and grid[row-i][col] != " "):
+                    return False
+    return True
+def placeWord(word):
+    wordFits = False
+    while not wordFits: 
+        col = random.randint(0, width -1)
+        row = random.randint(0, height -1)
+        direction = random.randint(1,4)
+        wordFits = wordWIllFit(col,row,word, direction)
+    match direction:
+        case 1:
+            for i in range(len(word)):
+                grid[row][col +i] = word[i]
+        case 2:
+            for i in range(len(word)):
+                grid[row+i][col] = word[i]
+        case 3:
+            for i in range(len(word)):
+                grid[row][col -i] = word[i]
+        case 4:
+            for i in range(len(word)):
+                grid[row-i][col] = word[i]
+    
+        
+
+def placeWords():
+    for word in words:
+        placeWord(word)
 
 words = wordList()
 displayWords()
@@ -57,4 +108,10 @@ for word in words:
     if len(word) > longestLength:
         longestLength = len(word) 
 grid = generateGrid()
+height = len(grid)
+width = len(grid[0])
 printGrid()
+placeWords()
+printGrid()
+print(height)
+print(len(grid))
