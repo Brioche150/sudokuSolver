@@ -44,14 +44,8 @@ def printGrid():
 
 def generateGrid():
     height = width =0
-    while(height < longestLength):
-        height = int(input("Please enter the height of the grid you would like: "))
-        if(height < longestLength):
-            print("The height must be greater than or equal to the length of the longest word in the list.")
-    while(width < longestLength):
-        width = int(input("Please enter the width of the grid you would like: "))
-        if(width < longestLength):
-            print("The width must be greater than or equal to the length of the longest word in the list.")
+    height = int(input("Please enter the height of the grid you would like: "))
+    width = int(input("Please enter the width of the grid you would like: "))
     grid =[[" "] * width for i in range(height)]
     return grid
 
@@ -96,10 +90,16 @@ def placeWord(word):
             for i in range(len(word)):
                 grid[row-i][col] = word[i]
     
-def placeWords():
+def placeWords(words):
+    newWords = words.copy()
     for word in words:
-        placeWord(word)
-
+        if(len(word) > height) and (len(word) > width): 
+            newWords.remove(word)
+        else:
+            placeWord(word)
+    words = newWords
+    return words
+    
 def randomGridFill():
     # I'm going to add random letters based on the frequency of letters in the word list
     allLetters = ""
@@ -111,7 +111,7 @@ def randomGridFill():
             if row[i] == " ":
                 row[i] = allLetters[random.randint(0, len(allLetters) -1 )]
 
-words = inputWords()
+words = wordList()
 displayWords()
 longestLength = 0
 for word in words:
@@ -120,8 +120,8 @@ for word in words:
 grid = generateGrid()
 height = len(grid)
 width = len(grid[0])
-printGrid()
-placeWords()
+words = placeWords(words)
 printGrid()
 randomGridFill()
 printGrid()
+displayWords()
