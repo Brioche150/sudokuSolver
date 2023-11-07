@@ -5,10 +5,10 @@ def configure_window():
     window.geometry("300x300")
 
 def create_buttons():
-#    global squares
-#    for square in squares:
+   global squares
+   for i in range(len(squares)):
        square = Button(window, image =available)
-       square.place(x=0,y=0)
+       square.place(x=100 * (i%3),y=100 * int(i/3))
        square.config(width = 100, height = 100)
 
 window = Tk()
