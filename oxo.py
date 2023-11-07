@@ -1,11 +1,21 @@
-from tkinter import Tk, PhotoImage, Button
+from tkinter import Tk, PhotoImage, Button, messagebox
 
 def configure_window():
     window.title("O X O")
     window.geometry("300x300")
 
+def square_taken():
+    messagebox.showerror(title = "Already selected", message="This square has already been selected, you cannot pick it.")
+
 def handle_button_click(button_number):
-    print(button_number)
+    global player
+    if(player == 1):
+        icon = ButtonP1
+        player =2
+    else:
+        icon = ButtonP2
+        player =1 
+    squares[button_number].config(image =icon, command = lambda:square_taken())
 
 def create_buttons():
    for i in range(len(squares)):
@@ -21,5 +31,6 @@ ButtonP2 = PhotoImage(file = "myButtonP2.png")
 winner = PhotoImage(file = "winner.png")
 squares = [None for i in range(9)]
 create_buttons()
-print(squares)
+player =1
+
 window.mainloop()
