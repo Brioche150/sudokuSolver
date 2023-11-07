@@ -10,18 +10,15 @@ def square_taken():
 def check_win():
     global moves
     won_game = False
-    global player
-    if(player ==1): #You only have to check if the player that just went won, which this does
-        playerCheck =2
-    else:
-        playerCheck = 1
-    if moves[0][0] == playerCheck and moves[1][1] == playerCheck and moves[2][2] == playerCheck: #Could have a for loop, but it's just longer
+    global counter
+    player = counter%2
+    if moves[0][0] == player and moves[1][1] == player and moves[2][2] == player: #Could have a for loop, but it's just longer
         return True
-    if moves[0][2] == playerCheck and moves[1][1] == playerCheck and moves[2][0] == playerCheck:
+    if moves[0][2] == player and moves[1][1] == player and moves[2][0] == player:
         return True
     for i in range(3): # checking all the rows
         for j in range(3):
-            if moves[i][j] != playerCheck:
+            if moves[i][j] != player:
                 won_game = False
                 break
             else:
@@ -30,7 +27,7 @@ def check_win():
             return True
     for i in range(3): # checking all the columns
         for j in range(3):
-            if moves[j][i] != playerCheck:
+            if moves[j][i] != player:
                 won_game = False
                 break
             else:
@@ -44,21 +41,21 @@ def update_move(buttonNum, player):
     global moves
     moves[buttonNum%3][int(buttonNum/3)] = player
     if check_win() == True:
-        print("won")
-        win = Button(window, image= winner)
-        win.pack(expand=True)
+        global win
+        win.pack(fill="both", expand=True)
         window.after(5000, game_loop)
 
 def handle_button_click(button_number):
-    global player
-    if(player == 1):
+    global counter
+    
+    player = counter%2
+    if(player==0):
         icon = ButtonP1
-        player =2
     else:
-        icon = ButtonP2
-        player =1 
+        icon = ButtonP2 
     squares[button_number].config(image =icon, command = lambda:square_taken())
     update_move(button_number, player)
+    counter+=1
 
 def create_buttons():
    for i in range(len(squares)):
@@ -66,12 +63,17 @@ def create_buttons():
        squares[i].place(x=100 * (i%3),y=100 * int(i/3))
        squares[i].config(width = 100, height = 100)
 
+def reset_buttons():
+    win.pack_forget()
+    for i in range(len(squares)):
+        squares[i].config(image=available, command=lambda n=i:handle_button_click(n))
+    
 def game_loop():
-    win = None
+    global win, counter, moves
+    reset_buttons()
     create_buttons()
-    player =1
-
-    moves = [[0] * 3] * 3
+    counter=0
+    moves = [[-1 for i in range(3)] for j in range(3)] 
 
 window = Tk()
 configure_window()
@@ -80,10 +82,11 @@ ButtonP1 = PhotoImage(file = "myButtonP1.png")
 ButtonP2 = PhotoImage(file = "myButtonP2.png")
 winner = PhotoImage(file = "winner.png")
 squares = [None for i in range(9)]
-player =1
-moves = [[0] * 3] * 3
-win = None
+win = Button(window, image= winner)
+create_buttons()
+counter=0
+moves = [[-1 for i in range(3)] for j in range(3)]
+
+
 game_loop()
-
-
 window.mainloop()
